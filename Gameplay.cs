@@ -11,9 +11,10 @@ namespace TankBattle
     public class Gameplay {
         // Private instance variables declared here
         private static TankController[] players;
-        private int maxRoundsPlay;
-        private int currentRound;
-        private int startingTankController;
+        private int maxRoundsPlay,currentRound;
+        private int [] positions;
+        private Terrain map = new Terrain(); 
+        private TankController startingTankController;
         private TankController currentPlayer;
 
         /// <summary>
@@ -44,10 +45,8 @@ namespace TankBattle
             return players.Length;
         }
 
-        // not got dis var yet bois
         public int CurrentRound() {
-            throw new NotImplementedException();
-            // return CurrentRound;
+            return currentRound;
         }
 
         public int GetMaxRounds()
@@ -140,7 +139,8 @@ namespace TankBattle
             int size = array.Length;
             Random rnd = new Random();
             int temp;
-
+            // Progresses through the input array, swapping the position of members of the array with 
+            // another member at a random position.
             for (int i = 0; i < size; i++) {
                 int index = rnd.Next(i, size);
 
@@ -148,89 +148,35 @@ namespace TankBattle
                 array[i] = array[index];
                 array[index] = temp;
             }
-            foreach(int x in array) {
-                Console.Write("{0} ", x);
-            }
-            /*Random rng = new Random();
-            int size = array.Length;
-            List<int> randList = new List<int>();
-            List<int> temp = new List<int>();
-            int i = 0;
-            int tempNum;
-            
-            foreach(int num in array) {
-                temp[i] = num;
-                i++;
-            }
-
-            for(int j = size-1; j > 0; j--) {
-                tempNum = rng.Next(0, j);
-                randList.Add(temp[tempNum]);
-                randList.RemoveAt(tempNum);
-            }
-
-            for(int j = 0; j < size-1; j++) {
-                array[i] = randList[i];
-            }*/
-
-            /*int size = array.Length;
-            int[] randArray = new int[size];
-            int[] temp = new int[size];
-            int holder;
-            int tempInt;
-            for(int i =0; i < size; i++) {
-                Console.Write("{0}  ", array[i]);
-            }
-            Console.WriteLine();
-            for (int i = 0; i < size; i++) {
-                do {
-                    holder = rng.Next(0, size);
-                } while (randArray.Contains(holder));
-                randArray[i] = holder;
-                Console.Write("{0} ", randArray[i]);
-            }
-
-            Console.WriteLine("rand array generated");
-            
-           for (int i = 0; i < size; i++) {
-                temp[i] = array[i];
-            }
-
-            Console.WriteLine("temp array generated");
-            for (int i = 0; i < size; i++) {
-                tempInt = randArray[i];
-                array[tempInt-1] = temp[i];
-                
-            }
-            Console.WriteLine("final array done bitches");
-            */
         }
 
         public void NewGame()
         {
-            // update starting values
-            this.currentRound = 1;
-            this.startingTankController = 0;
+            // Update starting values
+            currentRound = 1;
+            startingTankController = players[0];
             // Call method
             NewRound();
         }
 
         public void NewRound()
         {
-            // intialise currentPlayer to startingTankController
-            // create new terrain
-            // create new TankController positions (get length of TankController array)
-            // Call startRound method for each TankController
-            // shuffle positions array with Rearrange
-            // array of PlayerTank as private field (num PlayerTanks == num TankControllers)
-            // initialise PlayerTank by finding horizontal position of the PlayerTank (returned by CalcPlayerLocations and shuffled with the rearrange method)
-                
-            // 
+            startingTankController = currentPlayer;
+            map = new Terrain();
+            positions = CalcPlayerLocations(players.Length);
+            // TODO: Loop through all Tank Controllers and call TankController.StartRound() method
+            Rearrange(positions);
+            // TODO: Create an array of PlayerTanks that is same size as players[]
+            // TODO: Initialize array of PlayerTank by finding HorizontalPosition, VerticalPositon and then calling PlayerTank constructor
+            // TODO: Initialize wind speed between -100 and 100
+            // TODO: Create new skirmish form and Show() it
             throw new NotImplementedException();
         }
 
         public Terrain GetMap()
         {
+            // This method returns the current Terrain used by the game. This is stored in a private field and is initialised by NewRound().
+            // Implement after New Round
             throw new NotImplementedException();
         }
 
