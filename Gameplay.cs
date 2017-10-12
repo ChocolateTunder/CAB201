@@ -11,17 +11,14 @@ namespace TankBattle
     public class Gameplay {
         // Private instance variables declared here
         private static TankController[] players;
-        private int maxRoundsPlay,currentRound;
-        private int [] positions;
-        private Terrain map = new Terrain(); 
-        private TankController startingTankController;
         private TankController currentPlayer;
+        private TankController startingTankController;
+        private Terrain map = new Terrain();
+        private int maxRoundsPlay;
+        private int currentRound;
+        private int [] positions;
+        
 
-        /// <summary>
-        /// 
-        /// </summary>
-        /// <param name="numPlayers"></param>
-        /// <param name="numRounds"></param>
         public Gameplay(int numPlayers, int numRounds) {
 
             // Check if paremeters are within bounds (given in assignment description)
@@ -164,7 +161,9 @@ namespace TankBattle
             startingTankController = currentPlayer;
             map = new Terrain();
             positions = CalcPlayerLocations(players.Length);
-            // TODO: Loop through all Tank Controllers and call TankController.StartRound() method
+            foreach (TankController player in players) {
+                player.StartRound();
+            }
             Rearrange(positions);
             // TODO: Create an array of PlayerTanks that is same size as players[]
             // TODO: Initialize array of PlayerTank by finding HorizontalPosition, VerticalPositon and then calling PlayerTank constructor

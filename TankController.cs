@@ -9,29 +9,37 @@ namespace TankBattle
 {
     abstract public class TankController
     {
+        private string name;
+        private Color colour;
+        private Tank tank;
+        private int roundsWon;
+
         public TankController(string name, Tank tank, Color colour)
         {
-            throw new NotImplementedException();
+            this.name = name;
+            this.tank = tank;
+            this.colour = colour;
+            roundsWon = 0;
         }
         public Tank CreateTank()
         {
-            throw new NotImplementedException();
+            return tank;
         }
         public string Name()
         {
-            throw new NotImplementedException();
+            return name;
         }
         public Color GetColour()
         {
-            throw new NotImplementedException();
+            return colour;
         }
         public void WonRound()
         {
-            throw new NotImplementedException();
+            roundsWon += 1;
         }
         public int GetVictories()
         {
-            throw new NotImplementedException();
+            return roundsWon;
         }
 
         public abstract void StartRound();

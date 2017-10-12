@@ -81,7 +81,18 @@ namespace TankBattle
 
         public bool TankFits(int x, int y)
         {
-            throw new NotImplementedException();
+            for(int i = x; i <= x+Tank.WIDTH; i++){
+                for(int j = y; j <= y+Tank.HEIGHT; j++){
+                    if (initTerrain[j, i]) {
+                        return true;
+                    } else {
+                        return false;
+                    }
+                }
+                Console.WriteLine();
+            }
+
+            return true;
         }
 
         public int PlaceTankVertically(int x)

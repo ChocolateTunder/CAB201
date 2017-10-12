@@ -9,9 +9,11 @@ namespace TankBattle
 {
     public abstract class Attack
     {
+        protected Gameplay currentGame;
+
         public void SetCurrentGame(Gameplay game)
         {
-            throw new NotImplementedException();
+            currentGame = game;
         }
 
         public abstract void Tick();
