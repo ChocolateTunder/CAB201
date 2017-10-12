@@ -9,47 +9,70 @@ namespace TankBattle
 {
     public class PlayerTank
     {
+        private TankController player;
+        private Tank tank;
+        private Gameplay game;
+        private Bitmap bitmap;
+        private Gameplay currentGame;
+        private int tankX;
+        private int tankY;
+        private int durability;
+        private int power;
+        private int weapon;
+        private float angle;
+
         public PlayerTank(TankController player, int tankX, int tankY, Gameplay game)
         {
-            throw new NotImplementedException();
+            this.player = player;
+            this.tankX = tankX;
+            this.tankY = tankY;
+            this.game = game;
+            tank = CreateTank();
+            durability = tank.GetTankHealth();
+
+            angle = 0;
+            power = 25;
+            weapon = 0;
+
+            bitmap = tank.CreateTankBMP(player.GetColour(), angle);
         }
 
         public TankController GetPlayerNumber()
         {
-            throw new NotImplementedException();
+            return player;
         }
         public Tank CreateTank()
         {
-            throw new NotImplementedException();
+            return tank;
         }
 
         public float GetTankAngle()
         {
-            throw new NotImplementedException();
+            return angle;
         }
 
         public void SetAngle(float angle)
         {
-            throw new NotImplementedException();
+            this.angle = angle;
         }
 
         public int GetTankPower()
         {
-            throw new NotImplementedException();
+            return power;
         }
 
         public void SetTankPower(int power)
         {
-            throw new NotImplementedException();
+            this.power = power;
         }
 
         public int GetPlayerWeapon()
         {
-            throw new NotImplementedException();
+            return weapon;
         }
         public void SetWeapon(int newWeapon)
         {
-            throw new NotImplementedException();
+            weapon = newWeapon;
         }
 
         public void Display(Graphics graphics, Size displaySize)
@@ -59,11 +82,11 @@ namespace TankBattle
 
         public int XPos()
         {
-            throw new NotImplementedException();
+            return tankX;
         }
         public int Y()
         {
-            throw new NotImplementedException();
+            return tankY;
         }
 
         public void Attack()
@@ -73,12 +96,16 @@ namespace TankBattle
 
         public void Damage(int damageAmount)
         {
-            throw new NotImplementedException();
+            durability -= damageAmount;
         }
 
         public bool TankExists()
         {
-            throw new NotImplementedException();
+            if(durability > 0) {
+                return true;
+            } else {
+                return false;
+            }
         }
 
         public bool CalculateGravity()
