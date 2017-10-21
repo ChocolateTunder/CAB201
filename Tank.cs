@@ -139,8 +139,17 @@ namespace TankBattle {
     }
     //TODO Add 5 more tank types
     public class BasicTank : Tank {
+        public PlayerTank playerTank;
+        public TankController player;
+        int weapon;
+        float xPos, yPos;
         //Creation of the default tank
         public override void ActivateWeapon(int weapon, PlayerTank playerTank, Gameplay currentGame) {
+            this.playerTank = playerTank;
+            xPos = (float)playerTank.XPos() + (float)0.5 * WIDTH;
+            yPos = (float)playerTank.Y() + (float)0.5 * HEIGHT;
+            player = playerTank.GetPlayerNumber();
+
             throw new NotImplementedException();
         }
 

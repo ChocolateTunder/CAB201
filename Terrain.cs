@@ -81,23 +81,27 @@ namespace TankBattle
 
         public bool TankFits(int x, int y)
         {
-            for(int i = x; i <= x+Tank.WIDTH; i++){
-                for(int j = y; j <= y+Tank.HEIGHT; j++){
-                    if (initTerrain[j, i]) {
+            for(int i = x; i < x+Tank.WIDTH; i++){
+                for(int j = y; j < y+Tank.HEIGHT; j++){
+                    if (TerrainAt(i, j)) {
                         return true;
-                    } else {
-                        return false;
                     }
                 }
-                Console.WriteLine();
             }
 
-            return true;
+            return false;
         }
 
         public int PlaceTankVertically(int x)
         {
-            throw new NotImplementedException();
+            int y = 0;
+
+            while (!TankFits(x , y)) {
+                y++;
+            }
+
+            y--;
+            return y;
         }
 
         public void DestroyTerrain(float destroyX, float destroyY, float radius)
