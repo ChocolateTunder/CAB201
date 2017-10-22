@@ -139,8 +139,17 @@ namespace TankBattle {
     }
     //TODO Add 5 more tank types
     public class BasicTank : Tank {
+        public PlayerTank playerTank;
+        public TankController player;
+        int weapon;
+        float xPos, yPos;
         //Creation of the default tank
         public override void ActivateWeapon(int weapon, PlayerTank playerTank, Gameplay currentGame) {
+            this.playerTank = playerTank;
+            xPos = (float)playerTank.XPos() + (float)0.5 * WIDTH;
+            yPos = (float)playerTank.Y() + (float)0.5 * HEIGHT;
+            player = playerTank.GetPlayerNumber();
+
             throw new NotImplementedException();
         }
 
@@ -184,7 +193,6 @@ namespace TankBattle {
 
             if (degAngle == 0) {
                 Tank.CreateLine(graphic, 7, 6, 1, 7);
-                Console.WriteLine("straight up bois");
                 /*for (int j = 0; j < graphic.GetLength(0); j++) {
                     for (int i = 0; i < graphic.GetLength(1); i++) {
                         Console.Write(graphic[j, i]);
