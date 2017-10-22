@@ -6,10 +6,11 @@ using System.Threading.Tasks;
 using System.Drawing;
 using System.Windows.Forms;
 
-namespace TankBattle {
+namespace TankBattle
+{
     public class Gameplay {
         // Private instance variables declared here
-        private static TankController [] players;
+        private static TankController[] players;
         private List<Attack> attack;
         private TankController currentPlayer;
         private TankController startingTankController;
@@ -17,23 +18,23 @@ namespace TankBattle {
         private int maxRoundsPlay;
         private int currentRound;
         private int [] positions;
-        private PlayerTank [] tankPlayers;
+        private PlayerTank[] tankPlayers;
         private int windSpeed;
         SkirmishForm form;
 
         Random rng = new Random();
 
-        public Gameplay (int numPlayers, int numRounds) {
+        public Gameplay(int numPlayers, int numRounds) {
 
             // Check if paremeters are within bounds (given in assignment description)
             // if within bounds, store in private variables
             if ((numPlayers >= 2) && (numPlayers <= 8)) {
-                players = new TankController [numPlayers];
+                players = new TankController[numPlayers];
             } else {
                 throw new ArgumentOutOfRangeException();
             }
 
-            if ((numRounds >= 1) && (numRounds <= 100)) {
+            if((numRounds >= 1) && (numRounds <= 100)) {
                 maxRoundsPlay = numRounds;
             } else {
                 throw new ArgumentOutOfRangeException();
@@ -42,32 +43,37 @@ namespace TankBattle {
             attack = new List<Attack>();
         }
 
-        public int GetNumPlayers () {
+        public int GetNumPlayers() {
             return players.Length;
         }
 
-        public int CurrentRound () {
+        public int CurrentRound() {
             return currentRound;
         }
 
-        public int GetMaxRounds () {
+        public int GetMaxRounds()
+        {
             return maxRoundsPlay;
         }
 
-        public void SetPlayer (int playerNum, TankController player) {
-            players [playerNum - 1] = player;
+        public void SetPlayer(int playerNum, TankController player)
+        {
+            players[playerNum - 1] = player;
         }
 
-        public TankController GetPlayerNumber (int playerNum) {
-            return players [playerNum - 1];
+        public TankController GetPlayerNumber(int playerNum)
+        {
+            return players[playerNum - 1];
         }
 
-        public PlayerTank GetGameplayTank (int playerNum) {
+        public PlayerTank GetGameplayTank(int playerNum)
+        {
             // not ready yet bois
             throw new NotImplementedException();
         }
 
-        public static Color TankColour (int playerNum) {
+        public static Color TankColour(int playerNum)
+        {
             // initialise color values
             Color playerOne = Color.White;
             Color playerTwo = Color.Blue;
@@ -98,11 +104,12 @@ namespace TankBattle {
                 default:
                     throw new ArgumentOutOfRangeException();
             }
-
-
+            
+            
         }
 
-        public static int [] CalcPlayerLocations (int numPlayers) {
+        public static int[] CalcPlayerLocations(int numPlayers)
+        {
             // Ensure numPlayers is reasonable
             if (numPlayers < 2) {
                 throw new ArgumentOutOfRangeException();
@@ -113,22 +120,23 @@ namespace TankBattle {
             // Find distance between outside players and the boundaries (divide distance by two)
             double currentPos = Math.Round(distance / 2);
             // Array of player positions
-            int [] playerPositions = new int [numPlayers];
+            int[] playerPositions = new int[numPlayers];
 
             // Set first position 
-            playerPositions [0] = (int)currentPos - 3;
-
+            playerPositions[0] = (int)currentPos-3;
+            
             // sest remaining positions
             for (int i = 1; i < numPlayers; i++) {
                 currentPos += Math.Round(distance);
-                playerPositions [i] = (int)currentPos;
+                playerPositions[i] = (int)currentPos;
             }
 
             // return array
             return playerPositions;
         } // end CalcPlayerLocations()
 
-        public static void Rearrange (int [] array) {
+        public static void Rearrange(int[] array)
+        {
 
             int size = array.Length;
             Random rnd = new Random();
@@ -138,16 +146,17 @@ namespace TankBattle {
             for (int i = 0; i < size; i++) {
                 int index = rnd.Next(i, size);
 
-                temp = array [i];
-                array [i] = array [index];
-                array [index] = temp;
+                temp = array[i];
+                array[i] = array[index];
+                array[index] = temp;
             }
         }
 
-        public void NewGame () {
+        public void NewGame()
+        {
             // Update starting values
             currentRound = 1;
-            startingTankController = players [0];
+            startingTankController = players[0];
             // Call method
             NewRound();
         }
@@ -160,13 +169,14 @@ namespace TankBattle {
         /// Date created: 19/10/2017
         /// Date last modified: 19/10/2017
         /// </summary>
-        public void NewRound () {
+        public void NewRound()
+        {
             currentPlayer = startingTankController;
             map = new Terrain();
             positions = CalcPlayerLocations(players.Length);
             int xPos = 0;
             int yPos = 0;
-            form = new SkirmishForm(this);
+            form = new SkirmishForm(this); 
 
             foreach (TankController player in players) {
                 player.StartRound();
@@ -174,19 +184,22 @@ namespace TankBattle {
 
             Rearrange(positions);
 
-            tankPlayers = new PlayerTank [players.Length];
+            // TODO: Create an array of PlayerTanks that is same size as players[]
+            tankPlayers = new PlayerTank[players.Length];
 
+            // TODO: Initialize array of PlayerTank by finding HorizontalPosition, 
+            // VerticalPositon and then calling PlayerTank constructor
             for (int i = 0; i < tankPlayers.Length; i++) {
-                xPos = positions [i];
+                xPos = positions[i];
                 yPos = map.PlaceTankVertically(xPos);
-                tankPlayers [i] = new PlayerTank(players [i], xPos, yPos, this);
+                tankPlayers[i] = new PlayerTank(players[i], xPos, yPos, this);
             }
-
+            // TODO: Initialize wind speed between -100 and 100
             windSpeed = rng.Next(-100, 101);
-
+            // TODO: Create new skirmish form and Show() it
             form.Show();
         }
-
+        
         /// <summary>
         /// Gets the current terrain map used by the game that is initialised in NewRound().
         ///  
@@ -194,7 +207,8 @@ namespace TankBattle {
         /// <returns>Current Terrain map</returns>
         /// <created>Sophie Rogers, n9935100, 19.10.2017, 19.10.2017</created>
         /// <changed>Sophie Rogers, n9935100, 19.10.2017</changed>
-        public Terrain GetMap () {
+        public Terrain GetMap()
+        {
             return map;
         }
 
@@ -205,21 +219,23 @@ namespace TankBattle {
         /// <param name="displaySize"></param>
         /// <created>Sophie Rogers, n9935100, 19.10.2017</created>
         /// <changed>Sophie Rogers, n9935100, 19.10.2017</changed>
-        public void DisplayTanks (Graphics graphics, Size displaySize) {
+        public void DisplayTanks(Graphics graphics, Size displaySize)
+        {
             for (int i = 0; i < tankPlayers.Length; i++) {
-                if (tankPlayers [i].TankExists()) {
-                    tankPlayers [i].Display(graphics, displaySize);
+                if (tankPlayers[i].TankExists()) {
+                    tankPlayers[i].Display(graphics, displaySize);
                 }
             }
         }
 
-        public PlayerTank CurrentPlayerTank () {
+        public PlayerTank CurrentPlayerTank()
+        {
             int index = 0;
             bool found = false;
             // return PlayerTank associated with currentPlayer
             //int index = Array.Find(players, currentPlayer => currentPlayer.);
             for (int i = 0; i < players.Length; i++) {
-                if (players [i] == currentPlayer) {
+                if (players[i] == currentPlayer) {
                     index = i;
                     found = true;
                     i = players.Length;
@@ -230,7 +246,7 @@ namespace TankBattle {
             if (found == false) {
                 throw new Exception("CurrentPlayer not found");
             }
-            return tankPlayers [index];
+            return tankPlayers[index];
         }
 
         /// <summary>
@@ -240,9 +256,10 @@ namespace TankBattle {
         /// <param name="weaponEffect"></param>
         /// <created>Sophie Rogers, n9935100, 19.10.2017</created>
         /// <changed>Sophie Rogers, n9935100, 19.10.2017</changed>
-        public void AddEffect (Attack weaponEffect) {
+        public void AddEffect(Attack weaponEffect)
+        {
             attack.Add(weaponEffect);
-            attack [(attack.Count() - 1)].SetCurrentGame(this);
+            attack[(attack.Count() - 1)].SetCurrentGame(this);
         }
         /// <summary>
         /// Calls Tick() on each Attack in attack list.
@@ -251,12 +268,13 @@ namespace TankBattle {
         /// <returns>True if Attack objects in list</returns>
         /// <Created>Sophie Rogers, n9935100, 19.10.2017</Created>
         /// <Changed>Sophie Rogers, n9935100, 19.10.2017</Changed>
-        public bool WeaponEffectStep () {
+        public bool WeaponEffectStep()
+        {
             if (attack.Count() == 0) {
                 return false;
             }
 
-            foreach (Attack x in attack) {
+            foreach(Attack x in attack) {
                 x.Tick();
             }
             return true;
@@ -269,8 +287,9 @@ namespace TankBattle {
         /// <param name="displaySize"></param>
         /// <created>Sophie Rogers, n9935100, 19.10.2017</created>
         /// <changed>Sophie Rogers, n9935100, 19.10.2017</changed>
-        public void RenderEffects (Graphics graphics, Size displaySize) {
-            foreach (Attack x in attack) {
+        public void RenderEffects(Graphics graphics, Size displaySize)
+        {
+            foreach(Attack x in attack) {
                 x.Display(graphics, displaySize);
             }
         }
@@ -281,12 +300,13 @@ namespace TankBattle {
         /// <param name="weaponEffect"></param>
         /// <created>Sophie Rogers, n9935100, 19.10.2017</created>
         /// <changed>Sophie Rogers, n9935100, 19.10.2017</changed>
-        public void CancelEffect (Attack weaponEffect) {
+        public void CancelEffect(Attack weaponEffect)
+        {
             int index = -1;
-            for (int i = 0; i < attack.Count(); i++) {
-                if (attack [i] == weaponEffect) {
+            for(int i = 0; i < attack.Count(); i++) {
+                if (attack[i] == weaponEffect) {
                     index = i;
-                }
+                } 
             }
             if (index == -1) {
                 throw new Exception("weaponEffect not in attack array");
@@ -294,56 +314,38 @@ namespace TankBattle {
             attack.RemoveAt(index);
         }
 
-        public bool CheckIfTankHit (float projectileX, float projectileY) {
+        public bool CheckIfTankHit(float projectileX, float projectileY)
+        {
             throw new NotImplementedException();
         }
 
-        public void Damage (float damageX, float damageY, float explosionDamage, float radius) {
-            foreach (PlayerTank player in tankPlayers) {
-                // Variables to hold distance between tank and explosion 
-                float distX, distY, hypot;
-                int damage;
-
-                // Calculating the centre coordinates of the tanks
-                float centreX = (player.XPos() + (float)(0.5 * Tank.WIDTH));
-                float centreY = (player.Y() + (float)(0.5 * Tank.HEIGHT));
-
-                // If Tank is still alive, calculate the distance between centre of tank
-                // and origin of explosion
-                if (player.TankExists()) {
-                    distX = Math.Abs(damageX - centreX);
-                    distY = Math.Abs(damageY - centreY);
-
-                    hypot = (float)Math.Sqrt(Math.Pow(distX, 2) + Math.Pow(distY, 2));
-
-                    if ((hypot < radius) && (hypot > radius/2)) {
-                        damage = (int)(explosionDamage * ((radius - hypot) / radius));
-                        player.Damage(damage);
-                    } else if (hypot < radius / 2) {
-                        damage = (int)explosionDamage;
-                        player.Damage(damage);
-                    }
-                }
-            }
-        }
-
-        public bool CalculateGravity () {
+        public void Damage(float damageX, float damageY, float explosionDamage, float radius)
+        {
             throw new NotImplementedException();
         }
 
-        public bool FinaliseTurn () {
+        public bool CalculateGravity()
+        {
             throw new NotImplementedException();
         }
 
-        public void ScoreWinner () {
+        public bool FinaliseTurn()
+        {
             throw new NotImplementedException();
         }
 
-        public void NextRound () {
+        public void ScoreWinner()
+        {
             throw new NotImplementedException();
         }
 
-        public int GetWind () {
+        public void NextRound()
+        {
+            throw new NotImplementedException();
+        }
+        
+        public int GetWind()
+        {
             throw new NotImplementedException();
         }
     }
