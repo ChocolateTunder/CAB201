@@ -174,19 +174,16 @@ namespace TankBattle {
 
             Rearrange(positions);
 
-            // TODO: Create an array of PlayerTanks that is same size as players[]
             tankPlayers = new PlayerTank [players.Length];
 
-            // TODO: Initialize array of PlayerTank by finding HorizontalPosition, 
-            // VerticalPositon and then calling PlayerTank constructor
             for (int i = 0; i < tankPlayers.Length; i++) {
                 xPos = positions [i];
                 yPos = map.PlaceTankVertically(xPos);
                 tankPlayers [i] = new PlayerTank(players [i], xPos, yPos, this);
             }
-            // TODO: Initialize wind speed between -100 and 100
+
             windSpeed = rng.Next(-100, 101);
-            // TODO: Create new skirmish form and Show() it
+
             form.Show();
         }
 
@@ -297,32 +294,181 @@ namespace TankBattle {
             attack.RemoveAt(index);
         }
 
-        public bool CheckIfTankHit (float projectileX, float projectileY) {
-            throw new NotImplementedException();
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="projectileX"></param>
+        /// <param name="projectileY"></param>
+        /// <returns>true if terrain </returns>
+        /// <created>Sophie Rogers, n9935100, 21/10/2017</created>
+        /// <changed>Sophie Rogers, n9935100, 21/10/2017</changed>
+        public bool CheckIfTankHit(float projectileX, float projectileY) {
+            int tankX;
+            int tankY;
+            bool ifX = false;
+            bool ifY = false;
+            bool tankExists = false;
+            // return false if the coordinates are out of the map bounds
+            if (projectileX > Terrain.WIDTH || projectileY > Terrain.HEIGHT) {
+                return false;
+            }
+            // return true if there is something at the coordinate location
+            if (map.TerrainAt((int)projectileX, (int)projectileY)) {
+                return true;
+            }
+            // if there is a PlayerTank at location that exists, return true
+            for (int i = 0; i < tankPlayers.Length; i++) {
+                tankX = tankPlayers[i].XPos();
+                tankY = tankPlayers[i].Y(); ;
+                for (int j = 0; j < Tank.WIDTH; j++){
+                    if (projectileX == Tank.WIDTH - j) {
+                        ifX = true;
+                    }// end if
+                } // end for
+                for (int j = 0; j < Tank.HEIGHT; j++) {
+                    if (projectileX == Tank.HEIGHT - j) {
+                        ifY = true;
+                    }// end if
+                } // end for
+                if (tankPlayers[i].TankExists()) {
+                    tankExists = true;
+                } // end if
+                if (ifX == true && ifY == true && tankExists == true && tankPlayers[i] != CurrentPlayerTank()) {
+                    return true;
+                } // end if
+            }
+
+            return false;
         }
 
         public void Damage (float damageX, float damageY, float explosionDamage, float radius) {
-            throw new NotImplementedException();
+            foreach (PlayerTank player in tankPlayers) {
+                // Variables to hold distance between tank and explosion 
+                float distX, distY, hypot;
+                int damage;
+
+                // Calculating the centre coordinates of the tanks
+                float centreX = (player.XPos() + (float)(0.5 * Tank.WIDTH));
+                float centreY = (player.Y() + (float)(0.5 * Tank.HEIGHT));
+
+                // If Tank is still alive, calculate the distance between centre of tank
+                // and origin of explosion
+                if (player.TankExists()) {
+                    distX = Math.Abs(damageX - centreX);
+                    distY = Math.Abs(damageY - centreY);
+
+                    hypot = (float)Math.Sqrt(Math.Pow(distX, 2) + Math.Pow(distY, 2));
+
+                    if ((hypot < radius) && (hypot > radius/2)) {
+                        damage = (int)(explosionDamage * ((radius - hypot) / radius));
+                        player.Damage(damage);
+                    } else if (hypot < radius / 2) {
+                        damage = (int)explosionDamage;
+                        player.Damage(damage);
+                    }
+                }
+            }
         }
 
         public bool CalculateGravity () {
             throw new NotImplementedException();
         }
-
+        /// <summary>
+        ///  
+        /// </summary>
+        /// <returns></returns>
+        /// <created>Sophie Rogers, n9935100, 21/10/2017</created>
+        /// <changed>Sophie Rogers, n9935100, 21/10/2017</changed>
         public bool FinaliseTurn () {
-            throw new NotImplementedException();
+            int count = 0;
+            PlayerTank currentTank = tankPlayers[0];
+            int index = 0;
+            Random wind = new Random();
+            // loop through tankPlayers, check if tank exists
+            for(int i = 0; i < tankPlayers.Length; i++) {
+                if (tankPlayers[i].TankExists()) {
+                    count++;
+                }
+            }
+            // if number of existing tanks > 2
+            if (count >= 2){
+                // increment current player, check if exists
+                for (int i = 0; i < tankPlayers.Length; i++) {
+                    if (CurrentPlayerTank() == tankPlayers[i]) {
+                        currentTank = tankPlayers[i];
+                        index = i;
+                        i = tankPlayers.Length;
+                    }
+                }
+                // if current player doesn't exist, keep looping until it does.
+                while (!currentTank.TankExists()) {
+                    index++;
+                    currentTank = tankPlayers[index];
+                    // go back to 0 if necessary
+                    if (index == tankPlayers.Length) {
+                        index = -1;
+                    }
+                }
+                // adjust wind speed by number between -10 and 10, set to -100 or 100 if outside
+                windSpeed += wind.Next(-10, 11);
+                if (windSpeed > 100) {
+                    windSpeed = 100;
+                } else if (windSpeed < -100) {
+                    windSpeed = -100;
+                }
+                // return true
+                return true;
+            }
+            // if number of existing tanks < 2, score the winner and end the game
+            
+            ScoreWinner();
+            return false;
+            
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <created>Sophie Rogers, n9935100, 21/10/2017</created>
+        /// <changed>Sophie Rogers, n9935100, 21/10/2017</changed>
         public void ScoreWinner () {
-            throw new NotImplementedException();
+            for (int i = 0; i < tankPlayers.Length; i++) {
+                if (tankPlayers[i].TankExists()) {
+                    players[i].WonRound();
+                }
+            }
         }
 
         public void NextRound () {
-            throw new NotImplementedException();
+            int currentIndex = 0;
+            // increment currentRound
+            currentRound++;
+            // if currentRound less than or equal to max rounds
+            if (currentRound <= maxRoundsPlay) {
+                // switch to next starting player
+                for (int i = 0; i < players.Length; i++) {
+                    if (startingTankController == players[i]) {
+                        currentIndex = i;
+                        i = players.Length;
+                    }
+                }
+                currentIndex++;
+                if (currentIndex == players.Length) {
+                    currentIndex = 0;
+                }
+                NewRound();
+            }
+            // if currentRound is greater than max rounds, game over.
+            if(currentRound > maxRoundsPlay) {
+                TitlescreenForm f = new TitlescreenForm();
+                f.Show();
+            }
+            // show Leaderboard or TitleScreenForm
         }
 
+
         public int GetWind () {
-            throw new NotImplementedException();
+            return windSpeed;
         }
     }
 }
