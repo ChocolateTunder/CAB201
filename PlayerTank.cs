@@ -92,7 +92,7 @@ namespace TankBattle
 
         public void Attack()
         {
-            throw new NotImplementedException();
+            (this.CreateTank()).ActivateWeapon(GetPlayerWeapon(), this, currentGame);
         }
 
         public void Damage(int damageAmount)
