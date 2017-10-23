@@ -193,7 +193,6 @@ namespace TankBattle {
 
             if (degAngle == 0) {
                 Tank.CreateLine(graphic, 7, 6, 1, 7);
-                Console.WriteLine("straight up bois");
                 /*for (int j = 0; j < graphic.GetLength(0); j++) {
                     for (int i = 0; i < graphic.GetLength(1); i++) {
                         Console.Write(graphic[j, i]);

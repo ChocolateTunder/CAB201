@@ -29,6 +29,7 @@ namespace TankBattle
             this.game = game;
             tank = CreateTank();
             durability = tank.GetTankHealth();
+            currentGame = game;
 
             angle = 0;
             power = 25;
@@ -43,7 +44,7 @@ namespace TankBattle
         }
         public Tank CreateTank()
         {
-            return tank;
+            return player.CreateTank();
         }
 
         public float GetTankAngle()
@@ -110,7 +111,25 @@ namespace TankBattle
 
         public bool CalculateGravity()
         {
-            throw new NotImplementedException();
+            //If tank is dead, do nothing
+            if (!TankExists()) {
+                return false;
+            }
+
+            if(currentGame.GetMap().TankFits(XPos(), Y() + 1)){
+                return false;
+            }else {
+                tankY += 1;
+                durability -= 1;
+
+                if (tankY == (Terrain.HEIGHT - Tank.HEIGHT)) {
+                    durability = 0;
+                }
+
+                return true;
+            }
+
+
         }
     }
 }
