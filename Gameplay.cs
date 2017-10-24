@@ -10,6 +10,7 @@ namespace TankBattle {
     public class Gameplay {
         // Private instance variables declared here
         private static TankController [] players;
+        private PlayerTank [] tankPlayers;
         private List<Attack> attack;
         private TankController currentPlayer;
         private TankController startingTankController;
@@ -17,7 +18,6 @@ namespace TankBattle {
         private int maxRoundsPlay;
         private int currentRound;
         private int [] positions;
-        private PlayerTank [] tankPlayers;
         private int windSpeed;
         SkirmishForm form;
 

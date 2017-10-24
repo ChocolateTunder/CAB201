@@ -9,23 +9,19 @@ namespace TankBattle
 {
     public class Human : TankController
     {
-        public Human(string name, Tank tank, Color colour) : base(name, tank, colour)
-        {
+        public Human(string name, Tank tank, Color colour) : base(name, tank, colour){
             
         }
 
-        public override void StartRound()
-        {
+        public override void StartRound(){
             
         }
 
-        public override void NewTurn(SkirmishForm gameplayForm, Gameplay currentGame)
-        {
+        public override void NewTurn(SkirmishForm gameplayForm, Gameplay currentGame){
             gameplayForm.EnableControlPanel();
         }
 
-        public override void ReportHit(float x, float y)
-        {
+        public override void ReportHit(float x, float y){
             
         }
     }

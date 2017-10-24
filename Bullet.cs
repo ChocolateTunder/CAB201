@@ -11,8 +11,7 @@ namespace TankBattle
     {
         private float xVelocity;
         private float yVelocity;
-        private float  gravity;
-        private float x, y, angle, power;
+        private float x, y;
         private Explosion explosion;
         private TankController player;
         
@@ -42,7 +41,14 @@ namespace TankBattle
 
         public override void Display(Graphics graphics, Size size)
         {
-            throw new NotImplementedException();
+            float x = (float)this.x * size.Width / Terrain.WIDTH;
+            float y = (float)this.y * size.Height / Terrain.HEIGHT;
+            float s = size.Width / Terrain.WIDTH;
+
+            RectangleF r = new RectangleF(x - s / 2.0f, y - s / 2.0f, s, s);
+            Brush b = new SolidBrush(Color.WhiteSmoke);
+
+            graphics.FillEllipse(b, r);
         }
     }
 }
