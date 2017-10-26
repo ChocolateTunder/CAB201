@@ -11,8 +11,8 @@ namespace TankBattle
     {
         private float xVelocity;
         private float yVelocity;
-        private float  gravity;
-        private float x, y, angle, power;
+        private float x, y;
+        private float gravity;
         private Explosion explosion;
         private TankController player;
         
@@ -22,6 +22,7 @@ namespace TankBattle
             this.y = y;
             this.explosion = explosion;
             this.player = player;
+            this.gravity = gravity;
             float angleRadians = (90 - angle) * (float)Math.PI / 180;
             float magnitude = power / 50;
             xVelocity = (float)Math.Cos(angleRadians) * magnitude;
@@ -35,14 +36,32 @@ namespace TankBattle
                 x += currentGame.GetWind() / 1000.0f;
 
                 if ((x > Terrain.WIDTH) || (x < 0) || (y < 0)){
-                currentGame.CancelEffect(this);
+                    currentGame.CancelEffect(this);
+                    return;
                 }
-            }
+
+                if (currentGame.CheckIfTankHit(x, y)) {
+                    player.ReportHit(x, y);
+                    explosion.Explode(x, y);
+                    currentGame.AddEffect(explosion);
+                    currentGame.CancelEffect(this);
+                    return;
+                }
+
+                yVelocity += gravity;
+            } 
         }
 
         public override void Display(Graphics graphics, Size size)
         {
-            throw new NotImplementedException();
+            float x = (float)this.x * size.Width / Terrain.WIDTH;
+            float y = (float)this.y * size.Height / Terrain.HEIGHT;
+            float s = size.Width / Terrain.WIDTH;
+
+            RectangleF r = new RectangleF(x - s / 2.0f, y - s / 2.0f, s, s);
+            Brush b = new SolidBrush(Color.WhiteSmoke);
+
+            graphics.FillEllipse(b, r);
         }
     }
 }

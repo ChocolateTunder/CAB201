@@ -23,8 +23,23 @@ namespace TankBattle
         private BufferedGraphics backgroundGraphics;
         private BufferedGraphics gameplayGraphics;
 
+        string [] imageFilenames = { "Images\\background1.jpg",
+                            "Images\\background2.jpg",
+                            "Images\\background3.jpg",
+                            "Images\\background4.jpg"};
+        Color [] landscapeColours = { Color.FromArgb(255, 0, 0, 0),
+                             Color.FromArgb(255, 73, 58, 47),
+                             Color.FromArgb(255, 148, 116, 93),
+                             Color.FromArgb(255, 133, 119, 109) };
+
         public SkirmishForm(Gameplay game)
         {
+            currentGame = game;
+            int chosen = rng.Next(0, 4);
+
+            landscapeColour = landscapeColours [chosen];
+            backgroundImage = Image.FromFile(imageFilenames [chosen], true);
+
             SetStyle(ControlStyles.OptimizedDoubleBuffer, true);
             SetStyle(ControlStyles.DoubleBuffer, true);
             SetStyle(ControlStyles.AllPaintingInWmPaint, true);
@@ -32,7 +47,17 @@ namespace TankBattle
             SetStyle(ControlStyles.UserPaint, true);
 
             InitializeComponent();
-        }
+
+            backgroundGraphics = InitBuffer();
+            gameplayGraphics = InitBuffer();
+
+            DrawBackground();
+            
+            DrawGameplay();
+
+            Console.WriteLine("SkirmishForm.NewTurn() called in SkirmishForm.SkirmishForm()");
+            NewTurn();
+        }  
 
         // From https://stackoverflow.com/questions/13999781/tearing-in-my-animation-on-winforms-c-sharp
         protected override CreateParams CreateParams
@@ -47,26 +72,68 @@ namespace TankBattle
 
         public void EnableControlPanel()
         {
-            throw new NotImplementedException();
+            controlPanel.Enabled = true;           
         }
 
         public void SetAngle(float angle)
         {
-            throw new NotImplementedException();
+            angleSelector.Value = (decimal)angle;
         }
 
         public void SetTankPower(int power)
         {
-            throw new NotImplementedException();
+            powerSelector.Value = power;
         }
         public void SetWeapon(int weapon)
         {
-            throw new NotImplementedException();
+            weaponSelector.SelectedIndex = weapon;
         }
 
         public void Attack()
         {
-            throw new NotImplementedException();
+            currentGame.CurrentPlayerTank().Attack();
+            controlPanel.Enabled = false;
+            timer.Enabled = true;
+        }
+
+        private void DrawGameplay () {
+            backgroundGraphics.Render(gameplayGraphics.Graphics);
+            currentGame.DisplayTanks(gameplayGraphics.Graphics, displayPanel.Size);
+            currentGame.RenderEffects(gameplayGraphics.Graphics, displayPanel.Size);
+        }
+        
+        private void NewTurn () {
+            Console.WriteLine("SkirmishForm.NewTurn() called");
+            TankController player = currentGame.CurrentPlayerTank().GetPlayerNumber();
+            PlayerTank tank = currentGame.CurrentPlayerTank();
+
+            this.Text = String.Format("Tank Battle - Round {0} of {1}", currentGame.CurrentRound(), currentGame.GetMaxRounds());
+            controlPanel.BackColor = player.GetColour();
+            playerLabel.Text = player.Name();
+            tank.SetAngle((float)angleSelector.Value);
+            tank.SetTankPower(powerSelector.Value);
+
+            string direction; 
+            if (currentGame.GetWind() >= 0) {
+                direction = "E";
+            } else {
+                direction = "W";
+            }
+            windLabel.Text = String.Format("{0} {1}", Math.Abs(currentGame.GetWind()), direction);
+
+            weaponSelector.Items.Clear();
+
+            string [] weapons = tank.CreateTank().GetWeapons();
+            foreach (string weapon in weapons) {
+                weaponSelector.Items.Add(weapon);
+            }
+
+            tank.SetWeapon(weaponSelector.SelectedIndex);
+            player.NewTurn(this, currentGame);
+            Console.WriteLine("TankController.NewTurn() called in SkirmishForm.NewTurn()");
+
+            //currentGame.FinaliseTurn();
+            //Console.WriteLine("Gameplay.FinaliseTurn() called in SkirmishForm.NewTurn()");
         }
 
         private void DrawBackground()
@@ -107,6 +174,61 @@ namespace TankBattle
         {
             Graphics graphics = displayPanel.CreateGraphics();
             gameplayGraphics.Render(graphics);
+        }
+
+        private void weaponSelector_SelectedValueChanged (object sender, EventArgs e) {
+            PlayerTank tank = currentGame.CurrentPlayerTank();
+            tank.SetWeapon(weaponSelector.SelectedIndex);
+        }
+
+        private void angleSelector_ValueChanged (object sender, EventArgs e) {
+            PlayerTank tank = currentGame.CurrentPlayerTank();
+            tank.SetAngle((float)angleSelector.Value);
+            DrawGameplay();
+            displayPanel.Invalidate();
+        }
+
+        private void powerSelector_ValueChanged (object sender, EventArgs e) {
+            PlayerTank tank = currentGame.CurrentPlayerTank();
+            tank.SetTankPower(powerSelector.Value);
+            currentPower.Text = powerSelector.Value.ToString();
+        }
+
+        private void timer_Tick (object sender, EventArgs e) {
+            currentGame.WeaponEffectStep();
+
+            if (!currentGame.WeaponEffectStep()) {
+                currentGame.CalculateGravity();
+                DrawBackground();
+                DrawGameplay();
+                displayPanel.Invalidate();
+
+                if (currentGame.CalculateGravity() == true) {
+                    return;
+                }
+                if (currentGame.CalculateGravity() == false) { 
+
+                    timer.Enabled = false;
+                    //currentGame.FinaliseTurn();
+
+                    if (currentGame.FinaliseTurn() == true) {
+                        NewTurn();
+                        Console.WriteLine("SkirmishForm.NewTurn called in SkirmishForm.timer_Tick");
+                    }else {
+                        Dispose();
+                        currentGame.NextRound();
+                        return;
+                    }
+                }
+            } else {
+                DrawGameplay();
+                displayPanel.Invalidate();
+                return;
+            }
+        }
+
+        private void fireButton_Click (object sender, EventArgs e) {
+            Attack();
         }
     }
 }

@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace TankBattle
 {
-    public class Explosion : Attack
+   public class Explosion : Attack 
     {
         private int explosionDamage, explosionRadius, destructionRadius;
         private float x, y;

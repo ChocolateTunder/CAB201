@@ -78,7 +78,20 @@ namespace TankBattle
 
         public void Display(Graphics graphics, Size displaySize)
         {
-            throw new NotImplementedException();
+            int drawX1 = displaySize.Width * tankX / Terrain.WIDTH;
+            int drawY1 = displaySize.Height * tankY / Terrain.HEIGHT;
+            int drawX2 = displaySize.Width * (tankX + Tank.WIDTH) / Terrain.WIDTH;
+            int drawY2 = displaySize.Height * (tankY + Tank.HEIGHT) / Terrain.HEIGHT;
+            graphics.DrawImage(tank.CreateTankBMP(player.GetColour(), angle), new Rectangle(drawX1, drawY1, drawX2 - drawX1, drawY2 - drawY1));
+
+            int drawY3 = displaySize.Height * (tankY - Tank.HEIGHT) / Terrain.HEIGHT;
+            Font font = new Font("Arial", 8);
+            Brush brush = new SolidBrush(Color.White);
+
+            int pct = durability * 100 / tank.GetTankHealth();
+            if (pct < 100) {
+                graphics.DrawString(pct + "%", font, brush, new Point(drawX1, drawY3));
+            }
         }
 
         public int XPos()
@@ -92,7 +105,7 @@ namespace TankBattle
 
         public void Attack()
         {
-            throw new NotImplementedException();
+            (this.CreateTank()).ActivateWeapon(GetPlayerWeapon(), this, currentGame);
         }
 
         public void Damage(int damageAmount)
