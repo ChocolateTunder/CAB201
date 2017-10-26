@@ -10,14 +10,12 @@ namespace TankBattle {
         public const int WIDTH = 4;
         public const int HEIGHT = 3;
         public const int NUM_TANKS = 1;
-        
-      
-        public abstract int[,] DisplayTank(float angle);
-        
-        public static void CreateLine(int[,] graphic, int X1, int Y1, int X2, int Y2) {
-            /*Console.WriteLine("X1: {0}, Y1: {1}", X1, Y1);
-            Console.WriteLine("X2: {0}, Y2: {1}", X2, Y2);*/
-            
+
+
+        public abstract int[,] DisplayTank (float angle);
+
+        public static void CreateLine (int[,] graphic, int X1, int Y1, int X2, int Y2) {
+
             int dx = X2 - X1;
             int dy = Y2 - Y1;
 
@@ -88,7 +86,7 @@ namespace TankBattle {
             }*/
         }
 
-        public Bitmap CreateTankBMP(Color tankColour, float angle) {
+        public Bitmap CreateTankBMP (Color tankColour, float angle) {
             int[,] tankGraphic = DisplayTank(angle);
             int height = tankGraphic.GetLength(0);
             int width = tankGraphic.GetLength(1);
@@ -126,42 +124,66 @@ namespace TankBattle {
             return bmp;
         }
 
-        public abstract int GetTankHealth();
+        public abstract int GetTankHealth ();
 
-        public abstract string[] GetWeapons();
+        public abstract string[] GetWeapons ();
 
-        public abstract void ActivateWeapon(int weapon, PlayerTank playerTank, Gameplay currentGame);
+        public abstract void ActivateWeapon (int weapon, PlayerTank playerTank, Gameplay currentGame);
 
-        public static Tank CreateTank(int tankNumber) {
+        public static Tank CreateTank (int tankNumber) {
             //TODO Add if statement to select tank type
             return new BasicTank();
         }
     }
     //TODO Add 5 more tank types
     public class BasicTank : Tank {
-        public PlayerTank playerTank;
-        public TankController player;
-        float xPos, yPos;
-        //Creation of the default tank
-        public override void ActivateWeapon(int weapon, PlayerTank playerTank, Gameplay currentGame) {
-            this.playerTank = playerTank;
-            xPos = (float)playerTank.XPos() + (float)0.5 * WIDTH;
-            yPos = (float)playerTank.Y() + (float)0.5 * HEIGHT;
-            player = playerTank.GetPlayerNumber();
+        /* public PlayerTank playerTank;
+         public TankController player;
+         float xPos, yPos;*/
+
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="weapon" >integer, stores index of weapon</param>
+        /// <param name="playerTank"></param>
+        /// <param name="currentGame"></param>
+        /// <created>Sophie Rogers, n9935100, 26/10/2017</created>
+        /// <changed>Sophie Rogers, n9935100, 26/10/2017</changed>
+        public override void ActivateWeapon (int weapon, PlayerTank playerTank, Gameplay currentGame) {
+            // get xPos and yPos  
+
+            float xPos = (float)(playerTank.XPos() + (0.5 * WIDTH));
+            float yPos = (float)(playerTank.Y() + (0.5 * HEIGHT));
+
+            TankController player = playerTank.GetPlayerNumber();
+            Explosion newExplosion = new Explosion(100, 4, 4);
+
+            Bullet newBullet1 = new Bullet(xPos, yPos, playerTank.GetTankAngle(), playerTank.GetTankPower(), 0.01f, newExplosion, player);
+            // Bullet newBullet2 = new Bullet(xPos, yPos, (playerTank.GetTankAngle() + (float)0.2), playerTank.GetTankPower(), 0.021f, newExplosion, player);
+
+            currentGame.AddEffect(newBullet1);
+            /// currentGame.AddEffect(newBullet2);
+
+            // convert to floats w/ half tank width and tank height added
+            // get TankController associated w/ PlayerTank passed to ActivateWeapon by using GetPlayerNumber
+            // create a new explosion w/ damage = 100, radus = 4, earth radius = 4
+            // create a new Bullet for projectile, pass X and Y coords of Tank centre, 
+            // call GamePlay's AddEffect(), w/ new bullet is newly created
+
         }
 
         /// <summary>
         /// This method takes in an angle between -90 degress and 90 degrees and converts
         /// this to a position for the tank turret. The method the returns an array that 
         /// displays the tank with the turret in position.
-        /// 
-        /// Author: Sophie Rogers, n9925100
-        /// Date created: 12/10/2017
-        /// Date last modified: 12/10/2017
+        ///
         /// </summary>
         /// <param name="angle"></param>
         /// <returns></returns>
-        public override int[,] DisplayTank(float angle) {
+        /// <created>Sophie Rogers, n9935100, 12/10/2017</created>
+        /// <changed>Sophie Rogers, n9935100, 12/10/2017</changed>
+        public override int[,] DisplayTank (float angle) {
             // declare variables, store if angle is -ve
             const double LENGTH_TURRET = 5;
             double degAngle = angle;
@@ -174,7 +196,7 @@ namespace TankBattle {
             double opp;
             bool isNeg = false;
             //Console.WriteLine(degAngle);
-            
+
             int[,] graphic = { { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 },
                                { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 },
                                { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 },
@@ -199,12 +221,7 @@ namespace TankBattle {
                 return graphic;
             }
 
-            if (degAngle < 0) {
-                isNeg = true;
-                //Console.WriteLine("angle is negative");
-            } else {
-                isNeg = false;
-            }
+            isNeg = (degAngle < 0) ? true : false;
 
             // convert to radians
             if (degAngle < 0) {
@@ -228,7 +245,7 @@ namespace TankBattle {
                 x = xi + 4;
             } else if (adj < 0.5 && isNeg) {
                 x = xi - 4;
-            } else { 
+            } else {
                 x = (int)Math.Ceiling(adj);
                 if (isNeg) {
                     x = xi - x;
@@ -241,15 +258,15 @@ namespace TankBattle {
             if (opp < 0.5) {
                 y = yi - (int)Math.Floor(opp);
             } else {
-                y = yi - (int)Math.Ceiling(opp) ;
+                y = yi - (int)Math.Ceiling(opp);
             }
-            
+
             //Console.WriteLine("x = {0}, y = {1}", x, y);
 
             // determine quadrant
-            
+
             //Console.WriteLine("x = {0}, y = {1}", x, y);
-            
+
             // call CreateLine()
             CreateLine(graphic, xi, yi, y, x);
 
@@ -270,7 +287,7 @@ namespace TankBattle {
         /// Date last modified: 12/10/2017
         /// </summary>
         /// <returns></returns>
-        public override int GetTankHealth() {
+        public override int GetTankHealth () {
             return 100;
         }
 
@@ -282,8 +299,8 @@ namespace TankBattle {
         /// Date last modified: 12/10/2017
         /// </summary>
         /// <returns></returns>
-        public override string[] GetWeapons() {
-            string[] weapons = new string[] {"Standard Shell", "Missile", "Landmine", "Nuke" };
+        public override string[] GetWeapons () {
+            string[] weapons = new string[] { "Standard Shell", "Missile", "Landmine", "Nuke" };
             return weapons;
         }
     }

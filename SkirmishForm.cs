@@ -52,8 +52,9 @@ namespace TankBattle
             gameplayGraphics = InitBuffer();
 
             DrawBackground();
-
+            
             DrawGameplay();
+            
             NewTurn();
         }  
 
@@ -126,7 +127,6 @@ namespace TankBattle
             }
 
             tank.SetWeapon(weaponSelector.SelectedIndex);
-
             player.NewTurn(this, currentGame);
         }
 
@@ -216,6 +216,10 @@ namespace TankBattle
                 displayPanel.Invalidate();
                 return;
             }
+        }
+
+        private void fireButton_Click (object sender, EventArgs e) {
+            Attack();
         }
     }
 }
