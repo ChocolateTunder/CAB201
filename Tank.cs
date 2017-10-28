@@ -15,7 +15,6 @@ namespace TankBattle {
         public abstract int[,] DisplayTank (float angle);
 
         public static void CreateLine (int[,] graphic, int X1, int Y1, int X2, int Y2) {
-
             int dx = X2 - X1;
             int dy = Y2 - Y1;
 
@@ -211,7 +210,7 @@ namespace TankBattle {
                                { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 } };
 
             if (degAngle == 0) {
-                Tank.CreateLine(graphic, 7, 6, 1, 7);
+                CreateLine(graphic, 7, 6, 1, 7);
                 /*for (int j = 0; j < graphic.GetLength(0); j++) {
                     for (int i = 0; i < graphic.GetLength(1); i++) {
                         Console.Write(graphic[j, i]);

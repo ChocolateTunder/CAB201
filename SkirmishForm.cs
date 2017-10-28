@@ -83,13 +83,11 @@ namespace TankBattle
         {
             powerSelector.Value = power;
         }
-        public void SetWeapon(int weapon)
-        {
+        public void SetWeapon(int weapon){
             weaponSelector.SelectedIndex = weapon;
         }
 
-        public void Attack()
-        {
+        public void Attack(){
             currentGame.CurrentPlayerTank().Attack();
             controlPanel.Enabled = false;
             timer.Enabled = true;
@@ -130,8 +128,7 @@ namespace TankBattle
             player.NewTurn(this, currentGame);
         }
 
-        private void DrawBackground()
-        {
+        private void DrawBackground(){
             Graphics graphics = backgroundGraphics.Graphics;
             Image background = backgroundImage;
             graphics.DrawImage(backgroundImage, new Rectangle(0, 0, displayPanel.Width, displayPanel.Height));

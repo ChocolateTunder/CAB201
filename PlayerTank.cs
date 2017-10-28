@@ -105,7 +105,7 @@ namespace TankBattle
 
         public void Attack()
         {
-            (this.CreateTank()).ActivateWeapon(GetPlayerWeapon(), this, currentGame);
+            CreateTank().ActivateWeapon(GetPlayerWeapon(), this, currentGame);
         }
 
         public void Damage(int damageAmount)

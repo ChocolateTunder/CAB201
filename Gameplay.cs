@@ -378,7 +378,19 @@ namespace TankBattle {
         }
 
         public bool CalculateGravity () {
-            throw new NotImplementedException();
+            bool moved = false;
+
+            if (map.CalculateGravity()) {
+                moved = true;
+            }
+
+            foreach (PlayerTank tanks in tankPlayers) {
+                if (tanks.CalculateGravity()) {
+                    moved = true;
+                }
+            }
+
+            return moved;
         }
         /// <summary>
         ///  
